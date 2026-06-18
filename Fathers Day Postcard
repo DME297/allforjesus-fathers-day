@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>Father's Day Card</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: "Times New Roman", serif;
+  background: linear-gradient(135deg, #1e3a8a, #fbbf24);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 15px;
+}
+
+.card {
+  width: 90%;
+  max-width: 420px;
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  border: 6px solid #fbbf24;
+  position: relative;
+}
+
+.card::before,
+.card::after {
+  content: "✝️";
+  position: absolute;
+  font-size: 22px;
+}
+
+.card::before { top: 10px; left: 10px; }
+.card::after { bottom: 10px; right: 10px; }
+
+.title {
+  color: #1e3a8a;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #555;
+  font-size: 15px;
+  margin-bottom: 15px;
+}
+
+/* Image stays centered and smaller */
+.image {
+  width: 65%;
+  display: block;
+  margin: 10px auto 15px;
+  border-radius: 12px;
+}
+
+.verse {
+  min-height: 180px;
+  color: #1f2937;
+  font-size: 18px;
+  line-height: 1.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: pre-line;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: all 0.8s ease;
+}
+
+.verse.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.btn {
+  background: #1e3a8a;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.btn:hover {
+  background: #162c66;
+}
+
+.socials {
+  margin-top: 18px;
+}
+
+.socials a {
+  color: #1e3a8a;
+  text-decoration: none;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="card">
+
+  <div class="title">Happy Father's Day</div>
+  <div class="subtitle">From the All For Jesus Team ✝️</div>
+
+  <img class="image" src="AFJ_Fathers_day_Photo_on_Postcard.png" alt="Father and children">
+
+  <div class="verse" id="verseBox"></div>
+
+  <div class="button-row">
+    <button class="btn" onclick="generateVerse()">New Verse ✨</button>
+    <button class="btn" onclick="downloadCard()">Download ⬇️</button>
+    <button class="btn" onclick="shareCard()">Share 📤</button>
+  </div>
+
+  <div class="socials">
+    <a href="https://www.instagram.com/all.forjesus33" target="_blank">
+      @all.forjesus33
+    </a>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<script>
+const verses = [
+`Psalm 103:13
+
+"As a father has compassion on his children, so the Lord has compassion on those who fear Him."`,
+
+`Proverbs 20:7
+
+"The righteous man walks in his integrity; his children are blessed after him."`,
+
+`Ephesians 6:4
+
+"Fathers, do not provoke your children to anger, but bring them up in the discipline and instruction of the Lord."`,
+
+`Proverbs 3:11-12
+
+"My son, do not despise the Lord's discipline, because the Lord disciplines those He loves, as a father the son he delights in."`
+];
+
+function generateVerse() {
+  const box = document.getElementById("verseBox");
+  box.classList.remove("show");
+
+  setTimeout(() => {
+    const random = verses[Math.floor(Math.random() * verses.length)];
+    box.innerText = random;
+    box.classList.add("show");
+  }, 200);
+}
+
+function shareCard() {
+  if (navigator.share) {
+    navigator.share({
+      title: "Happy Father's Day",
+      text: "A Father's Day blessing from All For Jesus ✝️",
+      url: window.location.href
+    });
+  } else {
+    alert("Copy and share the link manually.");
+  }
+}
+
+function downloadCard() {
+  const card = document.getElementById("card");
+
+  // FIXED: Added security configurations to allow canvas photo rendering
+  html2canvas(card, {
+    useCORS: true,
+    allowTaint: true,
+    ignoreElements: (element) => {
+      return element.classList.contains("button-row");
+    }
+  }).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "fathers-day-card.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  }).catch(err => {
+    // Alert system added so you know exactly if a browser blocks it
+    alert("The browser security settings blocked the image download loop. Make sure you are using a live web link or local testing server!");
+    console.error(err);
+  });
+}
+
+// load first verse
+generateVerse();
+</script>
+
+</body>
+</html>
